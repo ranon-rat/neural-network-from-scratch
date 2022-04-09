@@ -1,8 +1,6 @@
 from random import choice
 from src.neural_network import NeuralNetwork
-
 train=[
-
     {
         'input':[0,0],
         'target':[0]
@@ -15,23 +13,25 @@ train=[
         "input":[1,0],
         "target":[1]
     },
-     
       {
         "input":[0,1],
         "target":[1]
-    },
-  
+    }, 
 ]
+testing=1
 def test(nen):
+    global testing,train
+    print(("-"*10),"TESTING #",testing,("-"*10))
+    for t in train:
+        print("\n","TESTING",t['input'],"TARGET",t['target'])
+        print("\tinput:",t['input'],"target:",t['target'])
+        cost,output=nen.cost(t['input'],t['target'])
+        print("\tprediction:",output)
+        print("\tcost:",cost)
     
-    print("it should be near to 1     ",nen.predict([1,0]),nen.cost([1,0],[1]))
-      
-    print("the same as before,1       ",nen.predict([0,1]),nen.cost([0,1],[1]))
-  
-    print("it should be near to 0     ",nen.predict([1,1]),nen.cost([1,1],[0]))
-    
-    print("the same as before, nothing",nen.predict([0,0]),nen.cost([0,0],[0]))
-
+   
+   
+    testing+=1
    
 def main():
 
