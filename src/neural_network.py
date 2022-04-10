@@ -1,20 +1,17 @@
-
-import random
-from turtle import clear
+from math import atan
 import numpy as np 
 #https://stackabuse.com/python-how-to-flatten-list-of-lists/
 
 sigmoid= np.vectorize(lambda x: 1/(1+np.exp(-x)))
 dsigmoid=np.vectorize(lambda y:y * (1 - y))
 relu=np.vectorize(lambda x: max(0,x))
-drelu=lambda x:np.where(x>0,1,0)
-
+drelu=np.vectorize(lambda x:np.where(x>0,1,0))
 tanh=np.vectorize(lambda x:np.tanh(x))
 dtanh=np.vectorize(lambda y:1-(y**2))
-
 class NeuralNetwork():
 
-    def __init__(self,length_of_input,length_of_output,hidden_layers=[2]):
+    def __init__(self,length_of_input,length_of_output,hidden_layers=[2], min_lr=1e-8,max_lr=1e-1):
+        
         layers=[length_of_input]+hidden_layers+[length_of_output]
         funcs=[tanh]*len(hidden_layers)+[tanh]
         dfuncs=[dtanh]*len(hidden_layers)+[dtanh]
@@ -23,7 +20,6 @@ class NeuralNetwork():
         nn=[[]]*len(layers)
     
         for l in range(len(layers)-1):
-          
             bias.append(np.matrix(np.random.rand(layers[l+1],1)))
             weights.append(np.matrix(np.random.rand(layers[l+1],layers[l])))
       
@@ -32,7 +28,12 @@ class NeuralNetwork():
         self.nn=(nn)
         self.weights=(weights)
         self.bias=(bias)
-        self.learning_rate=1/(10**(len(hidden_layers))-1)#1/(10**(len(hidden_layers)-1))
+        
+       
+        self.min_lr=min_lr
+        self.max_lr=max_lr
+
+        self.learning_rate=max_lr
 
     def feed_foward(self,input):
         nn=self.nn 
@@ -48,7 +49,6 @@ class NeuralNetwork():
             """
         
             res=np.matmul(weights[l],nn[l])
-           
             nn[l+1]=self.activation_funcs[l](res+bias[l])
         
         self.nn=nn
@@ -72,14 +72,23 @@ class NeuralNetwork():
         output=self.feed_foward(input)
    
         return output   
+    #https://www.jeremyjordan.me/nn-learning-rate/
+    def update_learning_rate(self,iteration,iterations):
+        x = (iteration+1) / (iterations+1)
+        self.learning_rate=self.min_lr + (self.max_lr-self.min_lr) * x
+
     def gradient_descent(self,output,errors,derivate_func):
         gradient=derivate_func(output)
         gradient=np.multiply(gradient,errors)
         gradient=np.multiply(gradient,self.learning_rate)
         return (gradient)
-   
-  
-    def train(self,input,target):
+    
+
+    def train(self,iterations:int,iteration,target,input):
+        self.update_learning_rate(iteration,iterations)
+        self.backprop(target,input)
+       
+    def backprop(self,input,target):
         
         output=self.feed_foward(input)
         errors=np.subtract(target,output)
@@ -88,12 +97,12 @@ class NeuralNetwork():
         for l in range(len(self.nn)-1)[::-1]:
           
             nn_t=np.transpose(self.nn[l])
-          
+            deltgrad=np.matmul(gradient,nn_t)
             # this is for getting the weights.. you know what i mean  
              # its the delta of the gradient so 
             # it will reduce the errors
             
-            self.weights[l]=np.add(self.weights[l],np.matmul(gradient,nn_t))
+            self.weights[l]=np.add(self.weights[l],deltgrad)
             self.bias[l]=np.add(self.bias[l],gradient)
             if l==0:break    
             weight_t=(self.weights[l]).transpose()

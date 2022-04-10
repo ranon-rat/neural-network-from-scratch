@@ -2,8 +2,7 @@
 from random import choice
 from src.neural_network import NeuralNetwork
 from matplotlib import pyplot as plt
-import matplotlib.cm as cm
-import numpy as np
+
 from celluloid import Camera
 
 
@@ -11,7 +10,7 @@ plt.style.use('dark_background')
 
 fig=plt.figure()
 camera=Camera(fig)
-nen=NeuralNetwork(2,1,[2])
+nen=NeuralNetwork(2,1,[2,2,2])
 
 train=[
     {
@@ -37,13 +36,14 @@ testing=1
 
 def test(nen):
     global testing,train
-    print(("-"*10),"TESTING #",testing,("-"*10))
+    print(("#"*10),"TESTING #",testing,("#"*10))
     for t in train:
-        print("\n","TESTING",t['input'],"TARGET",t['target'])
-        print("\tinput:",t['input'],"target:",t['target'])
+        print("\nTESTING",t['input'],"TARGET",t['target'])
+        print("\ninput:",t['input'],"target:",t['target'])
         cost,output=nen.cost(t['input'],t['target'])
-        print("\tprediction:",output)
-        print("\tcost:",cost)
+        print("prediction:",output)
+        print("cost:",cost,"\n")
+        print("-"*20)
     
    
     testing+=1
@@ -51,16 +51,17 @@ def test(nen):
     print(nen.nn)
 def main():
     test(nen)
-    epochs=6000
+    epochs=8000
     y=[0]*(epochs//10)
     
 
     for i in range(epochs):
         t=choice(train)
-        nen.train(t['input'],t['target'])
+        nen.train(epochs,i,t['input'],t['target'])
         
-        if i%10==0: 
+        if i%10==0:
             cost,_=nen.cost(t['input'],t['target'])
+            #=nen.general_cost(train)
             y[i//10]=(cost)
     plt.plot(y)
     test(nen)
