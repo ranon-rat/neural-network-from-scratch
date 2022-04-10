@@ -39,7 +39,8 @@ class NeuralNetwork():
 
         self.step_size=step_size
         self.batch_size=0
-        self.cycle_size=cycle_size
+        self.next_restart=cycle_size
+
 
     def feed_foward(self,input):
         nn=self.nn 
@@ -68,7 +69,7 @@ class NeuralNetwork():
        
       
         cost=sum(map(lambda x:self.cost(x["input"],x["target"])[0] ,train))
-        return cost
+        return cost/len(train)
     def cost(self,input,target):
         output=self.predict(input)
      
@@ -80,20 +81,21 @@ class NeuralNetwork():
         return output   
     #https://www.jeremyjordan.me/nn-learning-rate/
     def update_learning_rate(self):
-        x = self.batch_size/(self.step_size*self.cycle_size)
+        x = self.batch_size/(self.step_size*self.next_restart)
         self.learning_rate=self.min_lr+0.5*(self.max_lr-self.min_lr)*(1+np.cos(x*np.pi))
-   
-    def gradient_descent(self,output,errors,derivate_func):
-        gradient=derivate_func(output)
-        gradient=np.multiply(gradient,errors)
-        gradient=np.multiply(gradient,self.learning_rate)
-        return (gradient)
+ 
     
 
     def train(self,iterations:int,iteration,target,input):
         self.update_learning_rate()
         self.backprop(target,input)
         self.batch_size+=1
+        if iteration%self.step_size==0:
+            self.batch_size=0
+            self.next_restart+=self.step_size
+
+    def gradient_descent(self,output,errors,derivate_func):
+        return np.multiply( np.multiply(errors,derivate_func(output)),self.learning_rate)
        
     def backprop(self,input,target):
         

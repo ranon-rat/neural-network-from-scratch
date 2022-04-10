@@ -10,7 +10,7 @@ plt.style.use('dark_background')
 
 fig=plt.figure()
 camera=Camera(fig)
-nen=NeuralNetwork(2,1,[4,8,2],min_lr=1e-8,max_lr=1e-2)
+nen=NeuralNetwork(2,1,[2],min_lr=1e-3,max_lr=1e-1,decay_factor=0.99)
 
 train=[
     {
@@ -51,18 +51,17 @@ def test(nen):
     
 def main():
     test(nen)
-    epochs=8000
-    y=[0]*(epochs//10)
+    epochs=1000
+    y=[0]*(epochs)
     
 
     for i in range(epochs):
         t=choice(train)
         nen.train(epochs,i,t['input'],t['target'])
-        
-        if i%10==0:
-            cost,_=nen.cost(t['input'],t['target'])
-            #=nen.general_cost(train)
-            y[i//10]=(cost)
+       
+        cost=nen.general_cost(train)
+        #=nen.general_cost(train)
+        y[i]=(cost)
     plt.plot(y)
     test(nen)
 
