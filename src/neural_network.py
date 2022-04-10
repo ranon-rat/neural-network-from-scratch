@@ -10,13 +10,15 @@ tanh=np.vectorize(lambda x:np.tanh(x))
 dtanh=np.vectorize(lambda y:1-(y**2))
 class NeuralNetwork():
 
-    def __init__(self,length_of_input,length_of_output,hidden_layers=[2], min_lr=1e-8,max_lr=1e-1):
+    def __init__(self,length_of_input,length_of_output,hidden_layers=[2], min_lr=1e-8,max_lr=1e-1,decay_factor=0.95,step_size=1):
         
         layers=[length_of_input]+hidden_layers+[length_of_output]
         funcs=[tanh]*len(hidden_layers)+[tanh]
         dfuncs=[dtanh]*len(hidden_layers)+[dtanh]
+       
         bias=[]
         weights=[]
+       
         nn=[[]]*len(layers)
     
         for l in range(len(layers)-1):
@@ -25,15 +27,17 @@ class NeuralNetwork():
       
         self.derivate_funcs=dfuncs
         self.activation_funcs=funcs
+       
         self.nn=(nn)
         self.weights=(weights)
         self.bias=(bias)
         
-       
         self.min_lr=min_lr
         self.max_lr=max_lr
-
-        self.learning_rate=max_lr
+        
+        self.decay_factor=decay_factor
+        self.step_size=step_size
+  
 
     def feed_foward(self,input):
         nn=self.nn 
@@ -74,9 +78,11 @@ class NeuralNetwork():
         return output   
     #https://www.jeremyjordan.me/nn-learning-rate/
     def update_learning_rate(self,iteration,iterations):
-        x = (iteration+1) / (iterations+1)
-        self.learning_rate=self.min_lr + (self.max_lr-self.min_lr) * x
-
+        x=iteration/iterations
+        self.learning_rate=self.min_lr+(self.max_lr-self.min_lr)*x
+    def decay_learning_rate(self,epoch):
+        
+        self.learning_rate**=(self.decay_factor ** np.floor(epoch/self.step_size))
     def gradient_descent(self,output,errors,derivate_func):
         gradient=derivate_func(output)
         gradient=np.multiply(gradient,errors)
@@ -87,7 +93,7 @@ class NeuralNetwork():
     def train(self,iterations:int,iteration,target,input):
         self.update_learning_rate(iteration,iterations)
         self.backprop(target,input)
-       
+        self.decay_learning_rate(iteration)
     def backprop(self,input,target):
         
         output=self.feed_foward(input)

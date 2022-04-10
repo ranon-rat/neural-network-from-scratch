@@ -10,7 +10,7 @@ plt.style.use('dark_background')
 
 fig=plt.figure()
 camera=Camera(fig)
-nen=NeuralNetwork(2,1,[2,2,2])
+nen=NeuralNetwork(2,1,[4,8,2],min_lr=1e-6,max_lr=1e-1)
 
 train=[
     {
@@ -51,7 +51,7 @@ def test(nen):
     print(nen.nn)
 def main():
     test(nen)
-    epochs=8000
+    epochs=6000
     y=[0]*(epochs//10)
     
 
