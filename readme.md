@@ -1,4 +1,4 @@
-# simple neural network with python
+# simple neural network from scratch
 
 its a really simple neural network that i made for testing and learn ,
 i make it based on the videos of:
