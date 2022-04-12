@@ -3,8 +3,8 @@ from random import choice, shuffle
 from src.neural_network import NeuralNetwork
 import matplotlib.pyplot as plt
 import pandas as pd
-plt.set_style("dark")
 nn=NeuralNetwork(784,10,hidden_layers=[16,16],learning_rate=0.07)
+
 def main():
     data=pd.read_csv("data/train.csv")
     data = np.array(data)
