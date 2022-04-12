@@ -52,8 +52,8 @@ class NeuralNetwork():
        
         
         for l in range(len(layers_length)-1):
-            bias.append((np.random.rand(10,1))-0.5)
-            weights.append((np.random.rand(10,layers_length[l]))-0.5)
+            bias.append((np.random.rand(layers_length[l+1],1))-0.5)
+            weights.append((np.random.rand(layers_length[l+1],layers_length[l]))-0.5)
 
         self.activation_funcs_names=["relu"]*len(hidden_layers)+["sigmoid"]
         

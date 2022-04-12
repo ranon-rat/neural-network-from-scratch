@@ -3,7 +3,7 @@ from random import choice, shuffle
 from src.neural_network import NeuralNetwork
 import matplotlib.pyplot as plt
 import pandas as pd
-nn=NeuralNetwork(784,1,hidden_layers=[10],learning_rate=0.25)
+nn=NeuralNetwork(784,10,hidden_layers=[16,16],learning_rate=0.07)
 _,ax=plt.subplots(2)
 def main():
     data=pd.read_csv("data/train.csv")
