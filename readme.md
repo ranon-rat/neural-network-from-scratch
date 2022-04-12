@@ -6,4 +6,4 @@ i make it based on the videos of:
 - [the coding train](https://www.youtube.com/c/TheCodingTrain/)
 
 its really simple and maybe isnt the most efficient but Im happy with the results
-![im](https://media.discordapp.net/attachments/907631182240436305/962571173311426560/unknown.png)
+![im](https://media.discordapp.net/attachments/907631182240436305/963270529400324136/unknown.png)
