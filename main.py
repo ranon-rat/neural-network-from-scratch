@@ -3,8 +3,7 @@ from random import choice, shuffle
 from src.neural_network import NeuralNetwork
 import matplotlib.pyplot as plt
 import pandas as pd
-nn=NeuralNetwork(784,10,hidden_layers=[16,16],learning_rate=0.07)
-
+nn=NeuralNetwork(784,10,hidden_layers=[16,16],learning_rate=2.5)
 def main():
     data=pd.read_csv("data/train.csv")
     data = np.array(data)
@@ -18,8 +17,9 @@ def main():
     y=Y_dev[32]
     nn.copy_from("nn.json")
     out=nn.prediction(x)
-    plt.imshow(x.reshape(28,28))
-    plt.title("the actual number "+str(y) +" vs the predicted number "+str(out[0]))
+    x=x.reshape(28,28)
+    plt.imshow(x,cmap='gray')
+    plt.title("{} vs {}".format(y,out[0]))
    
 
     

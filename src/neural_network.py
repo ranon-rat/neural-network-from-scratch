@@ -122,21 +122,12 @@ class NeuralNetwork():
 
       
     
-    def gen_loss(self,train:list)->float:
-        # this is for getting the general cost
-        # its ugly
-        loss=sum(map(lambda x:self.loss(x["target"],x["input"])[0] ,train))
-        return loss/len(train)
-    def root_gen(self,target,input)->np.matrix:
-        c,_=self.loss(target,input)
-        x=np.mean(c)
-        x=np.sqrt(x)
-    def loss(self,target:float,input:float)->float:
+  
+    def loss(self,target,prediction)->float:
 
-        output=self.feed_foward(input)
-        #its a lisp reference omg
-        target=np.matrix(target).transpose()
-        return (np.sum(np.abs(output-target)),output)
+     
+        
+        return np.sum((prediction-target)**2)
     #just for testing
     def get_predictions(self,A2):
         return np.argmax(A2, 0)
@@ -153,8 +144,9 @@ class NeuralNetwork():
             self.weights[i]=(self.weights[i ]-(dw[i]*self.learning_rate))
             self.bias[i]=   (self.bias[i]-( db[i]*self.learning_rate))
 
-    def train(self,X,Y,iterations,m)->list:
+    def train(self,X,Y,iterations,m):
         accuracy_log=[]
+        loss_log=[]
         for i in range(iterations):
             layers=self.feed_foward(X)
 
@@ -167,13 +159,15 @@ class NeuralNetwork():
                 
                 predictions=self.get_predictions(layers[-1])
                 accuracy=self.get_accuracy(predictions,Y)
+                loss=self.loss(Y,predictions)
                 accuracy_log.append(accuracy)
+                loss_log.append(loss)
                 
                 
-                print("| predictions:",predictions[:10],"| accuracy:",str(accuracy)[:10],"|")
+                print("| predictions:",predictions[:10],"| accuracy:",str(accuracy)[:10],"|","loss:",str(loss)[:10],"|")
              
                 
-        return accuracy_log
+        return accuracy_log,loss_log
 
     
     
